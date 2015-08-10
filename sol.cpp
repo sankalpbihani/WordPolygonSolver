@@ -128,7 +128,7 @@ class solver
     trie dict;
 
     vector<vector<bool>> seen;
-    vector<string> ans;
+    set<string> ans;
     int n, m;
 
     void backtrack(int i, int j, string curr="", int state=0)
@@ -139,7 +139,9 @@ class solver
 
         curr += grid[i][j];
         state = dict.nextState(state, grid[i][j]);
-        if(dict.checkWordState(state)) ans.push_back(curr);
+
+        if(dict.checkWordState(state))
+            ans.insert(curr);
 
         if(dict.checkStrictPrefixState(state))
             for(int ii = i-1; ii <= i+1; ii++)
@@ -159,12 +161,12 @@ public:
         seen.resize(n, vector<bool>(m, false));
     }
 
-    vector<string> solve()
+    set<string> solve()
     {
         ans.clear();
         seen.clear();
 
-        if(!m || !n) return ans;
+        if(!n || !m) return ans;
 
         for(int i=0; i<n; i++)
             for(int j=0; j<m; j++)
@@ -226,7 +228,8 @@ int main()
             }
 
         solver sol(grid, dict);
-        vector<string> words = sol.solve();
+        set<string> swords = sol.solve();
+        vector<string> words(swords.begin(), swords.end());
 
         /**
             Output is given sorted according to following parameters
@@ -242,8 +245,6 @@ int main()
             else
                 return a.size() > b.size();
         });
-
-        words.erase(unique(words.begin(), words.end()), words.end());
 
         for(string w: words) cout<<w<<endl;
         cout<<endl;
